@@ -23,9 +23,9 @@ trait HeapProperties(val heapInterface: HeapInterface):
     "delete minumum of heap of one element should return an empty heap" ->
     forAll { (x: Int) =>
       // create a heap with exactly one element, `x`
-      val heap1: List[Node] = ???
+      val heap1: List[Node] = insert(1, empty)
       // delete the minimal element from it
-      val heap0: List[Node] = ???
+      val heap0: List[Node] = deleteMin(heap1)
       // check that heap0 is empty
       isEmpty(heap0)
     }
@@ -35,9 +35,9 @@ trait HeapProperties(val heapInterface: HeapInterface):
     forAll(generatedHeap.suchThat(heap => !isEmpty(heap))) { (heap: List[Node]) =>
       // find the miniminal element of the heap
       // (you don’t need to handle the case of empty heaps because it has been excluded from the heap generator)
-      val min: Int = ???
+      val min: Int = findMin(heap)
       // insert the minimal element to the heap
-      val updatedHeap: List[Node] = ???
+      val updatedHeap: List[Node] = insert(min, heap)
       // find the minimal element of the updated heap should return the same minimal element
       findMin(updatedHeap) == min
     }
@@ -51,16 +51,16 @@ trait HeapProperties(val heapInterface: HeapInterface):
         true
       else
         // find the minimal element
-        val x1: Int = ???
+        val x1: Int = findMin(heap)
         // delete the minimal element of `heap`
-        val heap2: List[Node] = ???
+        val heap2: List[Node] = deleteMin(heap)
         // find the minimal element in `heap2`
-        val x2: Int = ???
+        val x2: Int = findMin(heap2)
         // check that the deleted element is smaller than the minimal element
         // of the remaining heap, and that the remaining heap verifies the
         // same property (by recursively calling `check`)
-        val checked: Boolean = ???
-        checked
+        (x1 <= x2) && check(heap2)
+
     // check arbitrary heaps
     "continually finding and deleting the minimal element of a heap should return a sorted sequence" ->
     forAll { (heap: List[Node]) =>
@@ -73,16 +73,15 @@ trait HeapProperties(val heapInterface: HeapInterface):
       // create a first heap containing two times the highest value of `x` and `y`,
       // then create a second heap containing two times the lowest value of `x` and `y`,
       // and finally meld the two heaps
-      val meldedHeap: List[Node] = ???
+      val pair = if (x <= y) then (x, y) else (y, x)
+      val meldedHeap: List[Node] = meld(insert(pair._2, insert(pair._2, empty)), insert(pair._1, insert(pair._1, empty)))
       // check that deleting the minimal element twice in a row from the melded heap,
       // and then finding the minimal element in the resulting heap returns the
       // highest value
-      val deleteTwoMinAndFindMin: Boolean =
-        ???
+      val deleteTwoMinAndFindMin: Boolean = pair._2 == findMin(deleteMin(deleteMin(meldedHeap)))
       // check that inserting the lowest value to the melded heap, and then
       // finding the minimal element returns the lowest value
-      val insertMinAndFindMin: Boolean =
-        ???
+      val insertMinAndFindMin: Boolean = pair._1 == findMin(insert(pair._1, meldedHeap))
       // check that both conditions are fulfilled
       deleteTwoMinAndFindMin && insertMinAndFindMin
     }
@@ -114,7 +113,40 @@ trait HeapProperties(val heapInterface: HeapInterface):
   val meldingHeaps: (String, Prop) =
     "finding the minimum of melding any two heaps should return the minimum of one or the other of the source heaps" ->
     forAll { (heap1: List[Node], heap2: List[Node]) =>
-      ???
+      def check(left: List[Node], right: List[Node]): Boolean =
+        val meldedInput: List[Node] = meld(left, right)
+        if isEmpty(meldedInput) && isEmpty(left) && isEmpty(right)  then
+          true
+        else if isEmpty(meldedInput) && (!isEmpty(left) && !isEmpty(right)) ||
+          !isEmpty(meldedInput) && (isEmpty(left) && isEmpty(right)) then
+          false
+        else
+          val min: Int = findMin(meldedInput)
+          val minIsLeft: Boolean = !isEmpty(left) && min == findMin(left)
+          val minIsRight: Boolean = !isEmpty(right) && min == findMin(right)
+          if !minIsLeft && !minIsRight then
+            false
+          val newLeft: List[Node] =
+            if minIsLeft then
+              val temp = deleteMin(left)
+              if left.size - temp.size != 1 then
+                return false
+              else
+                temp
+            else
+              left
+          val newRight: List[Node] =
+            if !minIsLeft && minIsRight then
+              val temp = deleteMin(right)
+              if right.size - temp.size != 1 then
+                return false
+              else
+                temp
+            else
+              right
+          check(newLeft, newRight)
+
+      check(heap1, heap2)
     }
 
   // Random heap generator (used by Scalacheck)
