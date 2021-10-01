@@ -115,37 +115,26 @@ trait HeapProperties(val heapInterface: HeapInterface):
     forAll { (heap1: List[Node], heap2: List[Node]) =>
       def check(left: List[Node], right: List[Node]): Boolean =
         val meldedInput: List[Node] = meld(left, right)
-        if isEmpty(meldedInput) && isEmpty(left) && isEmpty(right)  then
+        if isEmpty(meldedInput) && isEmpty(left) && isEmpty(right) then
           return true
-        else if isEmpty(meldedInput) && (!isEmpty(left) && !isEmpty(right)) ||
-          !isEmpty(meldedInput) && (isEmpty(left) && isEmpty(right)) then
+        if !isEmpty(meldedInput) && isEmpty(left) && isEmpty(right) then
           return false
-        else
-          val min: Int = findMin(meldedInput)
-          val minIsLeft: Boolean = safeFindMin(left, min)
-          val minIsRight: Boolean = safeFindMin(right, min)
-          if !minIsLeft && !minIsRight then
-            return false
-          val newLeft: (List[Node], Boolean) = delete(left, minIsLeft)
-          if !newLeft._2 then
-            return false
-          val newRight: (List[Node], Boolean) = delete(right, !minIsLeft && minIsRight)
-          if !newRight._2 then
-            return false
-          val newMelded: List[Node] = meld(newLeft._1, newRight._1)
-          if !isEmpty(newMelded) then
-              val newMin = findMin(newMelded)
-              val error = !(safeFindMin(newLeft._1, newMin) || safeFindMin(newRight._1, newMin))
-              if error then
-                return false
-          check(newLeft._1, newRight._1)
+        if isEmpty(meldedInput) && (!isEmpty(left) || !isEmpty(right)) then
+          return false
+        val newHeaps: (List[Node], List[Node]) = removeMin(meldedInput, left, right)
+        check(newHeaps._1, newHeaps._2)
 
-      def delete(heap: List[Node], isMin: Boolean): (List[Node], Boolean) =
-        if isMin then
-          val modifiedHeap = deleteMin(heap)
-          return (modifiedHeap, (heap.length == 1 && isEmpty(modifiedHeap)) || heap.length - modifiedHeap.length != 1)
+      def removeMin(meldedHeap: List[Node], left: List[Node], right: List[Node]): (List[Node], List[Node]) =
+        val min: Int = findMin(meldedHeap)
+        val newMeldedHeap: List[Node] = deleteMin(meldedHeap)
+        val minIsLeft = safeFindMin(left, min)
+        val minIsRight = safeFindMin(right, min)
+        if minIsLeft then
+          (deleteMin(left), right)
+        else if minIsRight then
+          (left, deleteMin(right))
         else
-          return (heap, true)
+          throw new IllegalStateException()
 
       def safeFindMin(heap: List[Node], min: Int): Boolean =
         !isEmpty(heap) && min == findMin(heap)
