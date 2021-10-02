@@ -28,6 +28,11 @@ class QuickCheckSuite extends munit.FunSuite:
     checkBogus(quickcheck.test.Bogus5BinomialHeap())(_.deleteAllProducesSortedList, _.meldingSmallHeaps, _.meldingHeaps)
   }
 
+  test("") {
+    val foo: BinomialHeap = new BinomialHeap
+    val heap = new HeapProperties(quickcheck.test.BinomialHeap()) with ArbitraryHeaps
+    heap.ch
+  }
   import scala.concurrent.duration.DurationInt
   override val munitTimeout = 10.seconds
   val testParameters = Test.Parameters.default
