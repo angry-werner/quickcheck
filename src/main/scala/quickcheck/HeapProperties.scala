@@ -135,6 +135,7 @@ trait HeapProperties(val heapInterface: HeapInterface):
     val minIsLeft = safeFindMin(left, min)
     val minIsRight = safeFindMin(right, min)
     if minIsLeft then
+      
       (deleteMin(left), right, true)
     else if minIsRight then
       (left, deleteMin(right), true)

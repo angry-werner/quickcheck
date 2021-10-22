@@ -1,0 +1,31 @@
+<html><head><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        @media screen and (min-width: 1200px) {
+            body {
+                max-width: 50vw;
+                margin: auto;
+            }
+        }
+    </style>
+</head><body style="font-family: Helvetica;"><h1>Grading feedback</h1><div><div><p>The code you submitted did not pass all of our tests: your submission achieved a score of</p><div style="font-size: xx-large; text-align: center; font-weight: bold;"><p> 4.00 / 10.00</p></div><h2>Debug</h2><p>In order to find bugs in your code, we advise to perform the following steps:</p><ul><li>Take a close look at the test output that you can find below: it should point you to the part of your code that has bugs.</li><li>Run the tests that we provide with the handout on your code.</li><li>The tests we provide do not test your code in depth: they are very incomplete. In order to test more aspects of your code, write your own unit tests.</li><li>Take another very careful look at the assignment description. Try to find out if you misunderstood parts of it. While reading through the assignment, write more tests.</li></ul></div><div><h2>Log of failed tests</h2><p>
+    Below you can see a short feedback for every test that failed,
+    indicating the reason for the test failure and how many points
+    you lost for each individual test.
+
+    Tests that were aborted took too long too complete or crashed the
+    JVM. Such crashes can arise due to infinite non-terminating
+    loops or recursion (StackOverflowException) or excessive memory
+    consumption (OutOfMemoryException).
+</p><ul><li><p>Test description: Bogus (2) binomial heap does not satisfy properties. (10pts)(quickcheck.QuickCheckSuite)</p><pre><code>Observed error: The property &quot;finding the minimum of melding any two heaps should return the minimum of one or the other of the source heaps&quot; was expected to fail but it succeeded.
+The following input is expected to make it fail
+&gt; ARG_0: List(Node(-1684645331,1,List(Node(2147483647,0,List()))))
+&gt; ARG_1: List(Node(1947557193,1,List(Node(2147483647,0,List()))))
+</code></pre></li><li><p>Test description: Bogus (3) binomial heap does not satisfy properties. (10pts)(quickcheck.QuickCheckSuite)</p><pre><code>Observed error: The property &quot;finding the minimum of melding any two heaps should return the minimum of one or the other of the source heaps&quot; was expected to fail but it succeeded.
+The following input is expected to make it fail
+&gt; ARG_0: List(Node(-1684645331,1,List(Node(-1684645331,0,List()))))
+&gt; ARG_1: List(Node(1947557193,1,List(Node(1947557193,0,List()))))
+</code></pre></li><li><p>Test description: Bogus (4) binomial heap does not satisfy properties. (10pts)(quickcheck.QuickCheckSuite)</p><pre><code>Observed error: The property &quot;finding the minimum of melding any two heaps should return the minimum of one or the other of the source heaps&quot; was expected to fail but it succeeded.
+The following input is expected to make it fail
+&gt; ARG_0: List(Node(-1684645331,1,List(Node(2147483647,0,List()))))
+&gt; ARG_1: List(Node(1947557193,1,List(Node(2147483647,0,List()))))
+</code></pre></li></ul></div></div></body></html>

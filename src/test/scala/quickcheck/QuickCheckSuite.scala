@@ -6,6 +6,8 @@ import org.scalacheck.{Arbitrary, Gen, Prop, Test}
 import org.scalacheck.rng.Seed
 import org.scalacheck.Prop.*
 
+import munit.Clue.generate
+
 class QuickCheckSuite extends munit.FunSuite:
 
   test("Bogus (1) binomial heap does not satisfy properties. (10pts)") {
@@ -28,11 +30,20 @@ class QuickCheckSuite extends munit.FunSuite:
     checkBogus(quickcheck.test.Bogus5BinomialHeap())(_.deleteAllProducesSortedList, _.meldingSmallHeaps, _.meldingHeaps)
   }
 
-  test("") {
-    val foo: BinomialHeap = new BinomialHeap
-    val heap = new HeapProperties(quickcheck.test.BinomialHeap()) with ArbitraryHeaps
-    heap.ch
+  test("Case 1 from failing grading") {
+    val bogus2: HeapInterface = new Bogus2BinomialHeap
+    val meld = bogus2.meld(List(bogus2.Node(-1684645331,1,List(bogus2.Node(2147483647,0,List())))), List(bogus2.Node(1947557193,1,List(bogus2.Node(2147483647,0,List())))))
+    var min = bogus2.findMin(meld)
+    val first = bogus2.deleteMin(meld)
+    min = bogus2.findMin(first)
+    val second = bogus2.deleteMin(first)
+    min = bogus2.findMin(second)
+    val third = bogus2.deleteMin(second)
+    min = bogus2.findMin(third)
+    val fourth = bogus2.deleteMin(third)
+    assert(fourth.isEmpty)
   }
+
   import scala.concurrent.duration.DurationInt
   override val munitTimeout = 10.seconds
   val testParameters = Test.Parameters.default
